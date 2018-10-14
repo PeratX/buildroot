@@ -19,6 +19,13 @@ config BR2_PACKAGE_PHP
 
 if BR2_PACKAGE_PHP
 
+config BR2_PACKAGE_PHP_ZTS
+	bool "ZTS support"
+	select BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  Enable Zend Thread Safe.
+	  Required by some extensions.
+
 config BR2_PACKAGE_PHP_SAPI_APACHE
 	bool "Apache interface"
 	depends on BR2_PACKAGE_APACHE

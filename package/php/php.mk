@@ -78,6 +78,10 @@ else
 PHP_CONF_ENV += ac_cv_func_dlopen=no ac_cv_lib_dl_dlopen=no
 endif
 
+ifeq ($(BR2_PACKAGE_PHP_ZTS),y)
+PHP_CONF_OPTS += --enable-maintainer-zts
+PHP_EXTRA_LIBS += -lpthread
+endif
 PHP_CONF_OPTS += $(if $(BR2_PACKAGE_PHP_SAPI_CLI),--enable-cli,--disable-cli)
 PHP_CONF_OPTS += $(if $(BR2_PACKAGE_PHP_SAPI_CGI),--enable-cgi,--disable-cgi)
 PHP_CONF_OPTS += $(if $(BR2_PACKAGE_PHP_SAPI_FPM),--enable-fpm,--disable-fpm)
@@ -298,6 +302,43 @@ PHP_CONF_OPTS += \
 	--with-zlib-dir=$(STAGING_DIR)/usr \
 	--with-freetype-dir=$(STAGING_DIR)/usr
 PHP_DEPENDENCIES += jpeg libpng freetype
+endif
+
+# PECL
+ifeq ($(BR2_PACKAGE_PHP_EXT_YAML),y)
+PHP_YAML_VERSION = 2.0.2
+PHP_EXTRA_DOWNLOADS += https://pecl.php.net/get/yaml-$(PHP_YAML_VERSION).tgz
+PHP_CONF_OPTS += --with-yaml=$(STAGING_DIR)/usr
+PHP_DEPENDENCIES += libyaml
+define YAML_UNPACK
+mkdir -p $(@D)/ext/yaml
+tar -xvf $(BR2_DL_DIR)/yaml-$(PHP_YAML_VERSION).tgz -C $(@D)/ext/yaml --strip-components=1
+endef
+PHP_PRE_CONFIGURE_HOOKS := YAML_UNPACK $(PHP_PRE_CONFIGURE_HOOKS)
+endif
+
+ifeq ($(BR2_PACKAGE_PHP_EXT_SWOOLE),y)
+PHP_SWOOLE_VERSION = 4.2.1
+PHP_EXTRA_DOWNLOADS += https://pecl.php.net/get/swoole-$(PHP_SWOOLE_VERSION).tgz
+PHP_CONF_OPTS += --enable-async-redis --enable-openssl --with-hiredis-dir=$(STAGING_DIR)/usr
+PHP_DEPENDENCIES += hiredis
+define SWOOLE_UNPACK
+mkdir -p $(@D)/ext/swoole
+tar -xvf $(BR2_DL_DIR)/swoole-$(PHP_SWOOLE_VERSION).tgz -C $(@D)/ext/swoole --strip-components=1
+endef
+PHP_PRE_CONFIGURE_HOOKS := SWOOLE_UNPACK $(PHP_PRE_CONFIGURE_HOOKS)
+endif
+
+ifeq ($(BR2_PACKAGE_PHP_EXT_PTHREADS),y)
+#PHP_PTHREADS_VERSION = 3.1.6
+#PHP_EXTRA_DOWNLOADS += https://pecl.php.net/get/pthreads-$(PHP_PTHREADS_VERSION).tgz
+PHP_CONF_OPTS += --enable-pthreads
+define PTHREADS_UNPACK
+git clone https://github.com/krakjoe/pthreads.git --depth=1 $(@D)/ext/pthreads
+#mkdir -p $(@D)/ext/pthreads
+#tar -xvf $(BR2_DL_DIR)/pthreads-$(PHP_PTHREADS_VERSION).tgz -C $(@D)/ext/pthreads --strip-components=1
+endef
+PHP_PRE_CONFIGURE_HOOKS := PTHREADS_UNPACK $(PHP_PRE_CONFIGURE_HOOKS)
 endif
 
 ifeq ($(BR2_PACKAGE_PHP_SAPI_FPM),y)

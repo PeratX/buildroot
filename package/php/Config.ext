@@ -383,4 +383,26 @@ config BR2_PACKAGE_PHP_EXT_XSL
 	help
 	  XSL transformation support
 
+comment "PECL"
+
+config BR2_PACKAGE_PHP_EXT_YAML
+	bool "YAML"
+	select BR2_PACKAGE_LIBYAML
+	help
+	  PECL YAML extension
+
+config BR2_PACKAGE_PHP_EXT_PTHREADS
+	bool "pthreads"
+	depends on BR2_PACKAGE_PHP_ZTS
+	depends on BR2_PACKAGE_PHP_SAPI_CLI
+	help
+	  PECL pthreads extension
+
+config BR2_PACKAGE_PHP_EXT_SWOOLE
+	bool "Swoole (With OpenSSL & Async-Redis)"
+	select BR2_PACKAGE_HIREDIS
+	select BR2_PACKAGE_OPENSSL
+	help
+	  PECL Swoole extension
+
 endmenu
