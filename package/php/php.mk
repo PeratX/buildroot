@@ -320,7 +320,7 @@ endif
 ifeq ($(BR2_PACKAGE_PHP_EXT_SWOOLE),y)
 PHP_SWOOLE_VERSION = 4.2.1
 PHP_EXTRA_DOWNLOADS += https://pecl.php.net/get/swoole-$(PHP_SWOOLE_VERSION).tgz
-PHP_CONF_OPTS += --enable-swoole --enable-async-redis --enable-openssl --with-hiredis-dir=$(STAGING_DIR)/usr
+PHP_CONF_OPTS += --enable-swoole --enable-async-redis --enable-openssl --with-hiredis-dir=$(STAGING_DIR)/usr --with-openssl-dir=$(STAGING_DIR)/usr
 PHP_DEPENDENCIES += hiredis
 define SWOOLE_UNPACK
 mkdir -p $(@D)/ext/swoole
