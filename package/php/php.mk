@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PHP_VERSION = 7.2.10
+PHP_VERSION = 7.2.11
 PHP_SITE = http://www.php.net/distributions
 PHP_SOURCE = php-$(PHP_VERSION).tar.xz
 PHP_INSTALL_STAGING = YES
@@ -318,10 +318,15 @@ PHP_PRE_CONFIGURE_HOOKS := YAML_UNPACK $(PHP_PRE_CONFIGURE_HOOKS)
 endif
 
 ifeq ($(BR2_PACKAGE_PHP_EXT_SWOOLE),y)
-PHP_SWOOLE_VERSION = 4.2.1
+PHP_SWOOLE_VERSION = 4.2.3
 PHP_EXTRA_DOWNLOADS += https://pecl.php.net/get/swoole-$(PHP_SWOOLE_VERSION).tgz
-PHP_CONF_OPTS += --enable-swoole --enable-async-redis --enable-openssl --with-hiredis-dir=$(STAGING_DIR)/usr --with-openssl-dir=$(STAGING_DIR)/usr
-PHP_DEPENDENCIES += hiredis
+PHP_CONF_OPTS += \
+	--enable-swoole \
+	--enable-async-redis \
+	--enable-openssl \
+	--with-hiredis-dir=$(STAGING_DIR)/usr \
+	--with-openssl-dir=$(STAGING_DIR)/usr
+PHP_DEPENDENCIES += hiredis openssl
 define SWOOLE_UNPACK
 mkdir -p $(@D)/ext/swoole
 tar -xvf $(BR2_DL_DIR)/swoole-$(PHP_SWOOLE_VERSION).tgz -C $(@D)/ext/swoole --strip-components=1
